@@ -1,0 +1,22 @@
+on property:sys.fingerprint.boot=goodix_5126b
+    chown system system /dev/goodix_fp
+    chmod 0644 /dev/goodix_fp
+    enable biometrics-fingerprint-gf5126b
+
+# Notified from gf3208-restart-counter-sh
+on property:sys.fingerprint.stop=biometrics-fingerprint-gf5126b
+    stop biometrics-fingerprint-gf5126b
+
+service biometrics-fingerprint-gf5126b /vendor/bin/hw/vendor.vivo.hardware.biometrics.fingerprint@2.0-service-gf5126b
+    class late_start
+    user system
+    group system input sdcard_rw
+    onrestart restart gf5126b-restart-counter-sh
+	disabled
+
+# Make sys.fingerprint.reboottimes +1
+service gf5126b-restart-counter-sh /system/vendor/bin/sh /vendor/bin/init.vivo.fingerprint_restart_counter.sh biometrics-fingerprint-gf5126b 5
+    user system
+    group system
+    disabled
+    oneshot
